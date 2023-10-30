@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "graphs_for_economics"
+  site-url: "https://uh2000.github.io/graphs_for_economics"
+  description: "graphs for economics"
+  repo-branch: main
+  repo-url: "https://github.com/uh2000/graphs_for_economics"
