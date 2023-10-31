@@ -26,4 +26,10 @@ d = { 'settings': { 'branch': 'main',
                                            'graphs_for_economics.core.Graph_free_market.get_quantity': ( 'core.html#graph_free_market.get_quantity',
                                                                                                          'graphs_for_economics/core.py'),
                                            'graphs_for_economics.core.Graph_free_market.market_graph': ( 'core.html#graph_free_market.market_graph',
-                                                                                                         'graphs_for_economics/core.py')}}}
+                                                                                                         'graphs_for_economics/core.py'),
+                                           'graphs_for_economics.core.Graph_monopoly': ( 'core.html#graph_monopoly',
+                                                                                         'graphs_for_economics/core.py'),
+                                           'graphs_for_economics.core.Graph_monopoly.__init__': ( 'core.html#graph_monopoly.__init__',
+                                                                                                  'graphs_for_economics/core.py'),
+                                           'graphs_for_economics.core.Graph_monopoly.market_graph': ( 'core.html#graph_monopoly.market_graph',
+                                                                                                      'graphs_for_economics/core.py')}}}
