@@ -157,26 +157,39 @@ import sympy
 class Graph_monopoly(Graph_free_market):
     def __init__(self) -> None:
         super().__init__()
-        
     
     def market_graph(self, supply: str, demand: str, start: int, end: int, step: int, complete = False, is_tot_cost = False) -> None:
         x = symbols('x')
-        
-        if is_tot_cost == True:
-            supply_parsed = parse_expr(supply)
-            marginal_cost = diff(supply_parsed, x)
-        
+        supply_parsed = parse_expr(supply)
         demand_parsed = parse_expr(demand)
+        if is_tot_cost == True:
+            marginal_cost = diff(supply_parsed, x)
+        else:
+            marginal_cost = supply
+            
+            
+
         marginal_revenue = diff(demand_parsed, x)
         
         
+        print(marginal_cost, type(marginal_cost) +"\n "+ marginal_revenue, type(marginal_revenue))
         
-        supply, demand =str(marginal_cost), str(marginal_revenue)
+        if "x" not in str(marginal_cost) and "x" not in str(marginal_revenue):
+            print("Error, no equilibrium or infinite equilibriums")
+            return None
+        elif "x" not in str(marginal_cost):
+            price = float(marginal_cost)
+            quantity = solve(Eq(marginal_revenue, price), x)
+        elif "x" not in str(marginal_revenue):
+            price = float(marginal_revenue)
+            quantity = solve(Eq(marginal_cost, price), x)
+    
+        supply, demand = str(marginal_cost), str(marginal_revenue)
         
-        
-        
-        price = self.get_price(supply, demand)
-        quantity = self.get_quantity(supply, demand)
+        if not price: 
+            price = self.get_price(supply, demand)
+        if not quantity:
+            quantity = self.get_quantity(supply, demand)
 
         supply = self.get_calculate_values(supply, start, end, step)
         demand = self.get_calculate_values(demand, start, end, step)
@@ -186,33 +199,13 @@ class Graph_monopoly(Graph_free_market):
                      linestyle = "dashed", label = f"Price*: {price}")
             plt.plot([quantity for i in range(0, round(price) + 1 )], [i for i in range(0,round(price) + 1)],
                      linestyle = "dashed", label = f"Quantity*: {quantity}")
-
-
      
         plt.plot(supply.keys(),supply.values(), label = "Supply") 
         plt.plot(demand.keys(),demand.values(), label = "Demand") 
-
-        
 
         plt.xlabel("Quantity")
         plt.ylabel("Price")
 
         plt.legend() 
-        plt.show()
-
-
-    
-
-
-    
-        
-        
-        
-        
-    
-    
-        
-        # return super().market_graph(supply, demand, start, end, step, complete)
-        
-
+        plt.show()        
 

@@ -12,10 +12,7 @@ class Graph_free_market:
         
 
     def market_graph(self, supply: str, demand: str, start: int, end: int, step: int, complete = False) -> None:
-        """ from sympy import symbols, parse_expr,solve, Eq
-        import matplotlib.pyplot as plt """
-        
-
+       
         price = self.get_price(supply, demand)
         quantity = self.get_quantity(supply, demand)
 
@@ -78,8 +75,14 @@ class Graph_free_market:
         demand_eq = parse_expr(demand)
         
         # Calculate the equilibrium price and quantity
-        quantity = max(solve(Eq(supply_eq, demand_eq), x))
-        return round(quantity)
+        equilibrium = solve(Eq(supply_eq, demand_eq), x)
+        if equilibrium:
+            
+            quantity = max(solve(Eq(supply_eq, demand_eq), x))
+            return round(quantity)
+        else:
+            print("No equilibrium quantity")
+            return None
     
 
     def get_price(self, supply: str, demand: str) -> float:
@@ -88,7 +91,9 @@ class Graph_free_market:
         # Create the equation from the supply and demand functions
         supply_eq = parse_expr(supply)
         demand_eq = parse_expr(demand)
-
+        
+        
+        print(supply_eq, demand_eq)
         inverse_supply = solve(supply_eq - y, x)[0]
         inverse_demand = solve(demand_eq - y, x)[0]
         
@@ -145,3 +150,11 @@ class Graph_free_market:
         producer = self.get_producer_surplus(supply, demand)
         economic_surplus = consumer + producer
         return economic_surplus
+    
+    
+    
+
+graph = Graph_free_market()
+supply = "x**2"
+demand = "50*x-x**2"
+graph.market_graph(supply, demand,0, 50, 1, complete=False) # gets differentiated

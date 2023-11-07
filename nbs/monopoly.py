@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 from sympy import *
 import sympy
-from free_comp import Graph_free_market
+
+from free_market import Graph_free_market
+
 class Graph_monopoly(Graph_free_market):
     def __init__(self) -> None:
         super().__init__()
@@ -13,12 +15,14 @@ class Graph_monopoly(Graph_free_market):
         if is_tot_cost == True:
             supply_parsed = parse_expr(supply)
             marginal_cost = diff(supply_parsed, x)
+        else:
+            marginal_cost = supply
         
         demand_parsed = parse_expr(demand)
         marginal_revenue = diff(demand_parsed, x)
         
         
-        
+        print(marginal_cost, marginal_revenue)
         supply, demand =str(marginal_cost), str(marginal_revenue)
         
         
@@ -47,3 +51,10 @@ class Graph_monopoly(Graph_free_market):
 
         plt.legend() 
         plt.show()
+        
+
+if __name__ == "__main__":
+    graph = Graph_monopoly()
+    supply = "x**2"
+    demand = "50*x-x**2"
+    graph.market_graph(supply, demand,0, 50, 1, complete=False, is_tot_cost = True) # gets differentiated

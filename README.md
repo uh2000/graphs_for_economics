@@ -14,6 +14,10 @@ pip install graphs_for_economics
 ## How to use
 
 ``` python
+from graphs_for_economics.core import Graph_free_market, Graph_monopoly
+```
+
+``` python
 graph = Graph_free_market()
 supply_function = " x**2"
 demand_function = "1000 -  x**2"
@@ -31,15 +35,21 @@ economic_surplus = graph.get_economic_surplus(supply_function, demand_function)
 print("Economic Surplus:", economic_surplus)
 ```
 
+    x**2 1000 - x**2
     Consumer Surplus: 7451
+    x**2 1000 - x**2
     Producer Surplus: 18454
+    x**2 1000 - x**2
+    x**2 1000 - x**2
     Economic Surplus: 25905
 
 ``` python
 graph.market_graph(supply_function, demand_function,0, 40, 10, complete=True)
 ```
 
-![](index_files/figure-commonmark/cell-4-output-1.png)
+    x**2 1000 - x**2
+
+![](index_files/figure-commonmark/cell-5-output-2.png)
 
 ``` python
 price = graph.get_price(supply_function, demand_function)
@@ -47,4 +57,16 @@ quantity = graph.get_quantity(supply_function, demand_function)
 print(f"Price: {price}, Quantity: {quantity}")
 ```
 
+    x**2 1000 - x**2
     Price: 500, Quantity: 22
+
+``` python
+graph = Graph_monopoly()
+supply = "2*x**2"
+demand = "50*x -  3*x**2"
+graph.market_graph(supply, demand,0, 12, 1, complete=True, is_tot_cost = True)
+```
+
+    4*x 50 - 6*x
+
+![](index_files/figure-commonmark/cell-7-output-2.png)
