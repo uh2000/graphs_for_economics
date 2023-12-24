@@ -14,6 +14,7 @@ class Graph_free_market:
         return str(self.__class__) + ": " + str(self.__dict__)
     
     def market_graph(self, supply: str, demand: str, complete = False) -> None:
+        print("cannot multiply variables with zero")
         price = self.get_price(supply, demand)
         quantity = self.get_quantity(supply, demand)
         
@@ -29,26 +30,37 @@ class Graph_free_market:
         if "x" in supply:
             supply_dict = self.get_calculate_values(supply, end)
             print(f"supply_dict{supply_dict}")
-            supply_curve = list(supply_dict.values())
+            supply_curve = sorted(list(supply_dict.values()) + [float(price)])
+            supply_curve_domain = sorted(list(supply_dict.keys()) + [float(quantity)]) 
+            supply_dict[quantity] = price
 
 
+            #supply_curve_plot = plt.plot(supply_dict.keys(), supply_dict.values(), label = "Supply") 
             plt.plot(supply_dict.keys(), supply_dict.values(), label = "Supply") 
             
         else:
-            supply_list = [float(price) for i in range(start, math.ceil(end), step)]
+            supply_list = [float(price) for i in range(start, math.ceil(end), step)] + [float(price)]
             supply_curve = supply_list
+
+            
+            #supply_curve_plot = plt.plot(supply_curve, label = "Supply") 
             plt.plot(supply_curve, label = "Supply") 
             
         
         if "x" in demand:
             demand_dict = self.get_calculate_values(demand, end)
+            demand_dict[quantity] =  price
             print(f"demand_dict{supply_dict}")
-            demand_curve = list(demand_dict.values())
+            demand_curve = list(demand_dict.values()) + [float(price)]
+            demand_curve_domain = sorted(list(demand_dict.keys()) + [float(quantity)]) 
+
+            #demand_curve_plot = plt.plot(demand_dict.keys(),demand_dict.values(), label = "Demand") 
             plt.plot(demand_dict.keys(),demand_dict.values(), label = "Demand") 
             
         else:
             demand_list = [float(price) for i in range(start, math.ceil(end), step)]
-            demand_curve = demand_list
+            demand_curve = demand_list + [float(price)]
+            #demand_curve_plot = plt.plot(demand_curve, label = "Demand") 
             plt.plot(demand_curve, label = "Demand") 
             
 
@@ -69,45 +81,67 @@ class Graph_free_market:
             price_curve = np.array([price for i in range(len(x_range))], dtype=float) 
             quantum_curve = np.array([quantity for i in range(len(y_range))], dtype=float) 
 
+            """ quantity_curve_plot = plt.plot(x_range,                              # x [i for i in range(len(price_curve))],
+                                            price_curve,                         # y
+                                            linestyle = "dashed", label = f"Price*: {price}")
+            
+            price_curve_plot = plt.plot(quantum_curve,                             # x 
+                                        y_range,                                   # y [i for i in range(len(quantum_curve))]
+                                        linestyle = "dashed", label = f"Quantity*: {quantity}") """
+            
             plt.plot(x_range,                              # x [i for i in range(len(price_curve))],
-                     price_curve,                          # y
-                     linestyle = "dashed", label = f"Price*: {price}")
+                                            price_curve,                         # y
+                                            linestyle = "dashed", label = f"Price*: {price}")
             
             plt.plot(quantum_curve,                             # x 
-                     y_range,                                   # y [i for i in range(len(quantum_curve))]
-                     linestyle = "dashed", label = f"Quantity*: {quantity}")
+                                        y_range,                                   # y [i for i in range(len(quantum_curve))]
+                                        linestyle = "dashed", label = f"Quantity*: {quantity}")
             
             
 
             if "x" in supply:
                 price_curve = np.array(price_curve)
-                supply_curve = np.array(supply_curve[0:len(price_curve)])  
+                supply_curve = np.array(supply_curve[0:len(price_curve) -1] + [float(price)])  
                 
                 x_range = np.array(x_range)
                 
                 # Create a valid boolean array for the 'where' condition
-                condition = supply_curve[0:len(price_curve)] <= price_curve
+                condition = supply_curve[0:len(price_curve)]  <= price_curve
 
-                plt.fill_between(x_range, supply_curve, price_curve, where = condition, color = "silver", alpha=0.9) # producer surplus
+                demand_surplus_plot = plt.fill_between(x_range, supply_curve, price_curve, where = condition, color = "silver", alpha=0.9) # producer surplus
 
-                plt.text(float(quantity/4), price - 1, "Producer\nsurplus")
+                x_width = float(quantity) * 0.4,
+                y_height = (supply_curve[0] + price) * 0.6 if supply_curve[0] + price * 0.6 > price else price * 0.8
+
+
+                plt.text(float(quantity) * 0.4, y_height, "P.S")
                 
 
             if "x" in demand:
                 price_curve = np.array(price_curve)
-                demand_curve = np.array(demand_curve[0:len(price_curve)])  
+                demand_curve = np.array(demand_curve[0:len(price_curve)  - 1] + [float(price)])  
                 
                 x_range = np.array(x_range)
 
                 condition = demand_curve[0:len(price_curve)] >= price_curve
             
-                plt.fill_between(x_range, demand_curve, price_curve, where = condition, color = "lightgrey", alpha=0.9) # consumer surplus
+                consumer_surplus_plot = plt.fill_between(x_range, demand_curve, price_curve, where = condition, color = "purple", alpha=0.9) # consumer surplus
 
-                plt.text(float(quantity/4), price + 1, "Consumer\nsurplus")
+                y_height = (demand_curve[0] + price) * 0.4 if (demand_curve[0] + price) * 0.4 < price else price * 1.2
+                plt.text(float(quantity) * 0.4, y_height, "C.S")
             
             print(f"x_range is: {x_range}\nsupply curve is:{supply_curve}\ndemand curve is: {demand_curve}\nprice curve is: {price_curve}")
 
-        plt.legend() 
+        plt.legend()
+
+        """ plt.legend(handles = [consumer_surplus_plot, 
+                              demand_surplus_plot,
+                              price_curve_plot,
+                              quantity_curve_plot,
+                              demand_curve_plot,
+                              supply_curve_plot], 
+                              labels = ("Consumer Surplus", "Producer Surplus","Price*","Quantity*", 
+                                        "Demand", "Supply"))  """
         plt.show()
 
 
@@ -123,15 +157,10 @@ class Graph_free_market:
 
         
         if equation_function:
-            x_values = sorted([i for i in range(start, end, step)] + [quantity])
-            for x_val in x_values:
-                result = float(equation_function(x_val))
-                value_pairs[x_val] = result
-            #result = float(equation_function(quantity))
-            print(f"result from rational is {result}")
-            #value_pairs[x_val] = result
+            #value_pairs[x_val] = result """
             if end <= 1:
                 x_values = sorted([i for i in range(start, end, step)] + [quantity])
+                print(x_values)
                 for x_val in x_values:
                     result = float(equation_function(x_val))
                     value_pairs[x_val] = result
@@ -142,6 +171,7 @@ class Graph_free_market:
 
             else:
                 x_values = sorted([i for i in range(start, end, step)] + [quantity])
+                print(x_values)
                 for x_val in x_values:
                     result = float(equation_function(x_val))
                     value_pairs[x_val] = result
@@ -292,10 +322,10 @@ if __name__ == "__main__":
 
             print(f"supply function {supply_function}\ndemand function {demand_function}")
             graph.market_graph(supply_function, demand_function, complete=True)
-
+        
         """ graph = Graph_free_market()
-        supply_function = f"{0} + {4} * x"
-        demand_function = f"{5} - {1} * x"
+        supply_function = f"{0} + {1} * x"
+        demand_function = f"{9} - {5} * x"
         graph.market_graph(supply_function, demand_function, complete=True) """
         
         """ print(f"supply function {supply_function}\ndemand function {demand_function}")
@@ -322,7 +352,5 @@ if __name__ == "__main__":
         graph.market_graph(supply, demand,0, 12, 1, complete=True, is_tot_cost = False) """
 
 
-bad_cases = ["supply function 1 + 5 * x demand function 5 - 3 * x",
-             "supply function 0 + 5 * x demand function 10 - 1 * x",
-             "supply function 0 + 4 * x demand function 5 - 0 * x",
-             "supply function 0 + 1 * x demand function 9 - 5 * x"]
+bad_cases = ["supply function 0 + 1 * x demand function 9 - 5 * x",
+             "supply function 1 + 1 * x demand function 10 - 2 * x"]
